@@ -8,10 +8,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>com.lyflexi</groupId>
-    <artifactId>alert-xxljob</artifactId>
+    <artifactId>alert-nacos</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>alert-xxljob</name>
-    <description>alert-xxljob</description>
+    <name>alert-nacos</name>
+    <description>alert-nacos</description>
     <url/>
     <licenses>
         <license/>

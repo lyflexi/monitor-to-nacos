@@ -1,6 +1,7 @@
 package com.lyflexi.alertnacos.monitor;
 
-import com.alibaba.fastjson2.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -55,60 +56,6 @@ public class ServiceHealthMonitor {
      *
      *
      * services_info
-     [
-     {
-     "serviceName": "les-dis-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-plan-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-demand-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-system-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-picking-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-pull-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-transport-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-inventory-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-bridge-service",
-     "instances": 1
-     },
-     {
-     "serviceName": "msp-system",
-     "instances": 1
-     },
-     {
-     "serviceName": "msp-gateway",
-     "instances": 1
-     },
-     {
-     "serviceName": "xxl-job-admin",
-     "instances": 1
-     },
-     {
-     "serviceName": "les-message-service",
-     "instances": 1
-     }
-     ]
      */
     private static final String SERVICES_INFO = "services_info";
 
@@ -126,7 +73,7 @@ public class ServiceHealthMonitor {
         log.info("[服务健康监控开始执行]schedule time: {}", LocalDateTime.now());
         //初始化nacos链接
         initNamingService();
-        MspSettingVo settingVo = settingFacade.getSetting(LesUserContextHolder.getInstance().getTenantId(), SERVICES_INFO);
+        SysSettingVo settingVo = settingFacade.getSetting(SERVICES_INFO);
         Map<String, Integer> serviceMap = getServiceMap(settingVo);
         if (serviceMap == null) {
             return;
@@ -151,10 +98,11 @@ public class ServiceHealthMonitor {
      * @param settingVo
      * @return
      */
-    private Map<String, Integer> getServiceMap(MspSettingVo settingVo) {
+    private Map<String, Integer> getServiceMap(SysSettingVo settingVo) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> serviceList = null;
         try {
+            //TypeReference不要用fastjson，要用jackson的
             serviceList = objectMapper.readValue(settingVo.getConfigValue(), new TypeReference<List<Map<String, Object>>>() {});
         } catch (IOException e) {
             log.error("微服务参数配置错误");
